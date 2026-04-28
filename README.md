@@ -178,19 +178,23 @@ npm run prove [-- path/to/input.json]
 
 ### Tạo file input.json để dùng với prove.sh
 
-File input.json là một object JSON chứa tất cả các trường trong `buildInputs()`. Cách đơn giản nhất là thêm đoạn script tạm vào test:
+`scripts/generate_fixture.js` là script chính thức để tạo `test/fixtures/happyPath.json` — dùng logic giống hệt `buildInputs()` trong test suite:
 
-```javascript
-// Trong Node.js REPL hoặc script tạm:
-const inputs = await buildInputs();
-const fs = require("fs");
-fs.writeFileSync(
-  "test/fixtures/happyPath.json",
-  JSON.stringify(inputs, (_, v) => typeof v === "bigint" ? v.toString() : v, 2)
-);
+```bash
+node scripts/generate_fixture.js
+# → Ghi test/fixtures/happyPath.json
 ```
 
-> Lưu ý: JSON không hỗ trợ BigInt — phải convert sang string trước khi ghi, snarkjs tự xử lý khi đọc lại.
+Script sẽ: khởi tạo Poseidon → xây 3 cây SMT → ký EdDSA → ghi JSON với tất cả BigInt đã convert sang string (snarkjs tự xử lý khi đọc lại).
+
+Sau khi có file fixture, chạy proof như bình thường:
+
+```bash
+npm run prove                          # dùng test/fixtures/happyPath.json (mặc định)
+npm run prove -- path/to/custom.json   # dùng file khác
+```
+
+> **Khi nào cần chạy lại generate_fixture.js?** Mỗi khi thay đổi tham số claim (schemaHash, attributeValue, revNonce, …), thay private key, hoặc muốn tạo fixture với predicate/contextId khác.
 
 ---
 
@@ -256,6 +260,8 @@ zkp-poc/
 │       └── nullifier.circom           # C10: nullifier = Poseidon(seed, ctx)
 ├── test/
 │   ├── credentialAtomicQuery.test.js  # 9 test cases
+│   ├── fixtures/
+│   │   └── happyPath.json             # Canonical happy-path input cho prove.sh
 │   └── helpers/
 │       ├── smt.js                     # Build SMT, generate proofs
 │       ├── claim.js                   # Build + hash claim
@@ -263,7 +269,8 @@ zkp-poc/
 ├── scripts/
 │   ├── compile.sh                     # circom → r1cs + wasm
 │   ├── setup.sh                       # phase 2 trusted setup → zkey
-│   └── prove.sh                       # witness → proof → verify
+│   ├── prove.sh                       # witness → proof → verify
+│   └── generate_fixture.js            # Tạo test/fixtures/happyPath.json
 ├── build/                             # Generated (gitignored)
 ├── Spec_va_Prompt_Paradigm2.md        # Đặc tả kỹ thuật đầy đủ
 └── CLAUDE.md                          # Hướng dẫn cho Claude Code
