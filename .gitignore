@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Circom build artifacts
+build/
+
+# snarkjs intermediate files
+*.wtns
+*.ptau
+proof.json
+public.json
+
+# OS
+.DS_Store
+Thumbs.db

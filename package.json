@@ -1,0 +1,24 @@
+{
+  "name": "zkid-circuit",
+  "version": "1.0.0",
+  "description": "ZKP Credential Atomic Query — Paradigm 2 (SMT of Claims)",
+  "type": "commonjs",
+  "scripts": {
+    "compile": "bash scripts/compile.sh",
+    "setup": "bash scripts/setup.sh",
+    "test": "mocha test/credentialAtomicQuery.test.js --timeout 120000",
+    "prove": "bash scripts/prove.sh"
+  },
+  "dependencies": {
+    "@iden3/js-merkletree": "^1.2.0",
+    "circomlib": "^2.0.5",
+    "circomlibjs": "^0.1.7",
+    "ffjavascript": "^0.3.0",
+    "snarkjs": "^0.7.4"
+  },
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^10.3.0"
+  }
+}
